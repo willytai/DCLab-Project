@@ -562,7 +562,8 @@ RGB2Gray				u9	(	.iCLK(D5M_PIXLCLK),
 							.oBlue(tCCD_B)
 						);
 						
-logic [11:0] dummy1, dummy2, binary, buff1;					
+logic [11:0] dummy1, dummy2, binary; 
+logic buff1;					
 Gray2Binary			u10 (	.iCLK(D5M_PIXLCLK),
 							.iRST_n(DLY_RST_1),
 							.iRed(tCCD_R),
@@ -575,9 +576,11 @@ Gray2Binary			u10 (	.iCLK(D5M_PIXLCLK),
 
 assign buff1 = (binary == 0) ? 0 : 1;
 logic ParaDone, buff2, SeriDone;
-logic [479:0] [0:639] picture;
+//logic [479:0] [0:639] picture;
+//logic [307199:0] picture;
+logic picture;
 logic SeriStart;
-assign SeriStart = auto_start?1'b1:SeriDone;
+assign SeriStart = auto_start ? 1'b1 : SeriDone;
 Seri2Para			u11 (	.iCLK(D5M_PIXLCLK),
 							.iRST_n(DLY_RST_1),
 							.iSTART(SeriStart),

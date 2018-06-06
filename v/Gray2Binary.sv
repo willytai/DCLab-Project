@@ -32,9 +32,9 @@ module	Gray2Binary	(	iCLK,iRST_n,
 //	assign oGreen = Green_r;
 //	assign oBlue = Blue_r;
 	
-	assign oRed = iRed > th ? 4095 : 0;
-	assign oGreen = iGreen > th ? 4095 : 0;
-	assign oBlue = iBlue > th ? 4095 : 0;
+	assign oRed = iRed > th ? 12'd4095 : 12'd0;
+	assign oGreen = iGreen > th ? 12'd4095 : 12'd0;
+	assign oBlue = iBlue > th ? 12'd4095 : 12'd0;
 
 
 	always_ff@(posedge iCLK or negedge iRST_n)	begin
