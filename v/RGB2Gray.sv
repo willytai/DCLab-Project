@@ -12,27 +12,27 @@ module	RGB2Gray				(	iCLK,iRST_n,
 
 	input			iCLK;
 	input			iRST_n;
-	input	[11:0]	iRed;
-	input	[11:0]	iGreen;
-	input	[11:0]	iBlue;
+	input	[9:0]	iRed;
+	input	[9:0]	iGreen;
+	input	[9:0]	iBlue;
 
-	output	[11:0]	oRed;
-	output	[11:0]	oGreen;
-	output	[11:0]	oBlue;
+	output	[9:0]	oRed;
+	output	[9:0]	oGreen;
+	output	[9:0]	oBlue;
 
-	logic [11:0]	Red_w, Red_r;
-	logic [11:0]	Green_w, Green_r;
-	logic [11:0]	Blue_w, Blue_r;
+	logic [9:0]	Red_w, Red_r;
+	logic [9:0]	Green_w, Green_r;
+	logic [9:0]	Blue_w, Blue_r;
 
-	logic [21:0]	Gray;
+	logic [19:0]	Gray;
 
 	assign oRed = Red_r;
 	assign oGreen = Green_r;
 	assign oBlue = Blue_r;
 	
-	assign Red_w = Gray[21:10];
-	assign Green_w = Gray[21:10];
-	assign Blue_w = Gray[21:10];
+	assign Red_w = Gray[19:10];
+	assign Green_w = Gray[19:10];
+	assign Blue_w = Gray[19:10];
 
 
 	always_comb begin

@@ -596,9 +596,9 @@ Para2Seri           u12 (	.iCLK(D5M_PIXLCLK),
 							.pixel(buff2),
 							.oFinished(SeriDone)
 						);
-assign sCCD_R = (buff2 == 1'b0) ? 0 : 4095;
-assign sCCD_G = sCCD_R;
-assign sCCD_B = sCCD_R;
+assign sCCD_R = gCCD_R; // (buff2 == 1'b0) ? 0 : 4095;
+assign sCCD_G = gCCD_G;
+assign sCCD_B = gCCD_B;
 //---------------------------------------------------------------
 SEG7_LUT_8 			u5	(	.oSEG0(HEX0),.oSEG1(HEX1),
 							.oSEG2(HEX2),.oSEG3(HEX3),
@@ -702,12 +702,59 @@ I2C_CCD_Config 		u8	(	//	Host Side
 							.I2C_SCLK(D5M_SCLK),
 							.I2C_SDAT(D5M_SDATA)
 						);
+						
+// sobel ----------------------------------------------------
+// RGB
+wire [9:0] wVGA_R = Read_DATA2[9:0];
+wire [9:0] wVGA_G = {Read_DATA1[14:10],Read_DATA2[14:10]};
+wire [9:0] wVGA_B = Read_DATA1[9:0];
+
+// Gray
+wire [9:0] wGray_R, wGray_B, wGray_G;
+RGB2Gray(
+	.iCLK(VGA_CTRL_CLK),
+	.iRST_n(DLY_RST_2),
+	.iRed(wVGA_R),
+	.iGreen(wVGA_G),
+	.iBlue(wVGA_B),
+	.oRed(wGray_R),
+	.oGreen(wGray_G),
+	.oBlue(wGray_B)
+);
+
+// wire       wDVAL_sobel;
+wire [9:0] wSobel;
+
+Sobel sobel0 (
+  .iCLK(VGA_CTRL_CLK),
+  .iRST_N(DLY_RST_2),
+  .iTHRESHOLD(SW[9:2]),
+  .iDVAL(Read),
+  .iDATA(wVGA_G), // gray
+  .oDVAL(wDAL_sobel),
+  .oDATA(wSobel)
+);					
+
+// to display
+wire [9:0] wDISP_R = SW[15] ? wGray_R : // Gray
+                     SW[14] ? wSobel :  // Sobel
+                               wVGA_R;   // Color
+wire [9:0] wDISP_G = SW[15] ? wGray_G : // Gray
+                     SW[14] ? wSobel :  // Sobel
+                               wVGA_G;   // Color
+wire [9:0] wDISP_B = SW[15] ? wGray_B : // Gray
+                     SW[14] ? wSobel :  // Sobel
+                               wVGA_B;   // Color					
+						
 //VGA DISPLAY
 VGA_Controller		u1	(	//	Host Side
 							.oRequest(Read),
-							.iRed(Read_DATA2[9:0]),
-							.iGreen({Read_DATA1[14:10],Read_DATA2[14:10]}),
-							.iBlue(Read_DATA1[9:0]),
+							//.iRed(Read_DATA2[9:0]),
+							//.iGreen({Read_DATA1[14:10],Read_DATA2[14:10]}),
+							//.iBlue(Read_DATA1[9:0]),
+							.iRed(wDISP_R),
+							.iGreen(wDISP_G),
+							.iBlue(wDISP_B),
 							//	VGA Side
 							.oVGA_R(oVGA_R),
 							.oVGA_G(oVGA_G),

@@ -93,7 +93,7 @@ parameter	V_SYNC_TOTAL=	628;
 
 `endif
 //	Start Offset
-parameter	X_START		=	H_SYNC_CYC+H_SYNC_BACK;
+parameter	X_START		=	H_SYNC_CYC+H_SYNC_BACK - 10;
 parameter	Y_START		=	V_SYNC_CYC+V_SYNC_BACK;
 //	Host Side
 input		[9:0]	iRed;
