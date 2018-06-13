@@ -722,29 +722,74 @@ RGB2Gray(
 	.oBlue(wGray_B)
 );
 
-// wire       wDVAL_sobel;
+wire       wDVAL_sobel;
 wire [9:0] wSobel;
-
 Sobel sobel0 (
   .iCLK(VGA_CTRL_CLK),
   .iRST_N(DLY_RST_2),
   .iTHRESHOLD(SW[9:2]),
   .iDVAL(Read),
-  .iDATA(wVGA_G), // gray
+  .iDATA(wGray_G), // gray
   .oDVAL(wDAL_sobel),
   .oDATA(wSobel)
-);					
+);	
 
+wire 		  wDVAL_mode0;
+wire [9:0] wMode0;
+Mode mode0(
+	.iCLK(VGA_CTRL_CLK),
+	.iRST_N(DLY_RST_2),
+	.iDVAL(Read),
+   .iDATA(wSobel),
+	.oDVAL(wDVAL_mode0),
+	.oDATA(wMode0)
+	);
+/*
+wire 		  wDVAL_erosion0;
+wire [9:0] wErosion0;
+Erosion erosion0 (
+	.iCLK(VGA_CTRL_CLK),
+	.iRST_N(DLY_RST_2),
+	.iDVAL(Read),
+   .iDATA(wSobel),
+	.oDVAL(wDVAL_erosion0),
+	.oDATA(wErosion0)
+);
+wire 		  wDVAL_erosion;
+wire [9:0] wErosion;
+Erosion erosion1 (
+	.iCLK(VGA_CTRL_CLK),
+	.iRST_N(DLY_RST_2),
+	.iDVAL(Read),
+   .iDATA(wErosion0),
+	.oDVAL(wDVAL_erosion),
+	.oDATA(wErosion)
+);
+
+wire 		  wDVAL_dilation;
+wire [9:0] wDilation;
+Dilation dilation1 (
+	.iCLK(VGA_CTRL_CLK),
+	.iRST_N(DLY_RST_2),
+	.iDVAL(Read),
+   .iDATA(wErosion),
+	.oDVAL(wDVAL_dilation),
+	.oDATA(wDilation)
+);
+*/
 // to display
-wire [9:0] wDISP_R = SW[15] ? wGray_R : // Gray
-                     SW[14] ? wSobel :  // Sobel
-                               wVGA_R;   // Color
-wire [9:0] wDISP_G = SW[15] ? wGray_G : // Gray
-                     SW[14] ? wSobel :  // Sobel
-                               wVGA_G;   // Color
-wire [9:0] wDISP_B = SW[15] ? wGray_B : // Gray
-                     SW[14] ? wSobel :  // Sobel
-                               wVGA_B;   // Color					
+wire [9:0] wDISP_R = SW[15] ? wGray_R :   // Gray
+                     SW[14] ? wSobel :    // Sobel
+							SW[13] ? wMode0 : // dilation
+                               wVGA_R;    // Color
+wire [9:0] wDISP_G = SW[15] ? wGray_G :   // Gray
+                     SW[14] ? wSobel :    // Sobel
+							SW[13] ? wMode0 : // dilation
+                               wVGA_G;    // Color
+wire [9:0] wDISP_B = SW[15] ? wGray_B :   // Gray
+                     SW[14] ? wSobel :    // Sobel
+							SW[13] ? wMode0 : // dilation
+                               wVGA_B;    // Color					
 						
 //VGA DISPLAY
 VGA_Controller		u1	(	//	Host Side
